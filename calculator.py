@@ -88,8 +88,23 @@ def resolve_path(path):
     # examples provide the correct *syntax*, but you should
     # determine the actual values of func and args using the
     # path.
-    func = add
-    args = ['25', '32']
+
+    funcs = {
+        'add': add,
+        'substract': subtract,
+        'multiply': multiply,
+        'divide': divide,
+    }
+
+    path = path.strip('/').split('/')
+
+    func_name = path[0]
+    args = path[1:]
+
+    try:
+        func = funcs[func_name]
+    except KeyError:
+        raise NameError
 
     return func, args
 
@@ -98,12 +113,24 @@ def application(environ, start_response):
     # work here as well! Remember that your application must
     # invoke start_response(status, headers) and also return
     # the body of the response in BYTE encoding.
-    #
+    status = "200 OK"
+
+    if environ.get('REQUEST_METHOD') == "GET":
+        body = b"This is a GET request!"
+    elif environ.get('REQUEST_METHOD') == "POST":
+        body = b"This is a POST request!"
+    else:
+        body = "This is neither a GET request nor a POST request!"
+
+    response_headers = [('Content-type', 'text/plain'),
+                        ('Content-length', len(body))]
+    start_response(status, response_headers)
+    return [body]
     # TODO (bonus): Add error handling for a user attempting
     # to divide by zero.
     pass
 
 if __name__ == '__main__':
-    # TODO: Insert the same boilerplate wsgiref simple
-    # server creation that you used in the book database.
-    pass
+    from wsgiref.simple_server import make_server
+    srv = make_server('localhost', 8080, application)
+    srv.serve_forever()
