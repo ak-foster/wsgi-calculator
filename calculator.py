@@ -44,14 +44,39 @@ To submit your homework:
 
 def add(*args):
     """ Returns a STRING with the sum of the arguments """
+    sum = sum(args)
 
-    # TODO: Fill sum with the correct value, based on the
-    # args provided.
-    sum = "0"
+    return str(sum)
 
-    return sum
+# Added functions for handling more arithmetic operations.
 
-# TODO: Add functions for handling more arithmetic operations.
+
+def subract(*args):
+    total = args[0]
+
+    for num in args[1:]:
+        total -= num
+
+    return str(total)
+
+
+def multiply(*args):
+    product = args[0]
+
+    for num in args[1:]:
+        product *= num
+
+    return str(product)
+
+
+def divide(*args):
+    quotient = args[0]
+
+    for num in args[1:]:
+        quotient /= num
+
+    return str(quotient)
+
 
 def resolve_path(path):
     """
