@@ -28,11 +28,12 @@ def multiply(*args):
 
 def divide(*args):
     quotient = args[0]
-
-    for num in args[1:]:
-        quotient /= num
-
-    return str(quotient)
+    try:
+        for num in args[1:]:
+            quotient /= num
+        return str(quotient)
+    except ZeroDivisionError:
+        return "You cannot divide by zero..."
 
 def index(*args):
     return "Use the address bar to do math.  E.g. .../subtract/10/2 will return 8"
@@ -84,8 +85,6 @@ def application(environ, start_response):
         headers.append(('Content-length', str(len(body))))
         start_response(status, headers)
         return [body.encode('utf8')]
-
-    # TODO: Add error handling for a user attempting to divide by zero.
 
 
 if __name__ == '__main__':
