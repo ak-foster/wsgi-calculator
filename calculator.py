@@ -109,26 +109,31 @@ def resolve_path(path):
     return func, args
 
 def application(environ, start_response):
-    # TODO: Your application code from the book database
-    # work here as well! Remember that your application must
-    # invoke start_response(status, headers) and also return
-    # the body of the response in BYTE encoding.
-    status = "200 OK"
 
-    if environ.get('REQUEST_METHOD') == "GET":
-        body = b"This is a GET request!"
-    elif environ.get('REQUEST_METHOD') == "POST":
-        body = b"This is a POST request!"
-    else:
-        body = "This is neither a GET request nor a POST request!"
+    headers = [("Content-type", "text/html")]
+    try:
+        path = environ.get('PATH_INFO', None)
+        if path is None:
+            raise NameError
+        func, args = resolve_path(path)
+        body = func(*args)
+        status = "200 OK"
+    except NameError:
+        status = "404 Not Found"
+        body = "<h1>Not Found</h1>"
+    except Exception:
+        status = "500 Internal Server Error"
+        body = "<h1>Internal Server Error</h1>"
+        print(traceback.format_exc())
+    finally:
+        headers.append(('Content-length', str(len(body))))
+        start_response(status, headers)
+        return [body.encode('utf8')]
+        return [body]
 
-    response_headers = [('Content-type', 'text/plain'),
-                        ('Content-length', len(body))]
-    start_response(status, response_headers)
-    return [body]
     # TODO (bonus): Add error handling for a user attempting
     # to divide by zero.
-    pass
+
 
 if __name__ == '__main__':
     from wsgiref.simple_server import make_server
